@@ -16,5 +16,3 @@ matplotlib>=3.2.2
 # Scikit-learn for any additional data processing or evaluation metrics (optional)
 scikit-learn>=0.24.0
 
-
-streamlit run C:/Users/LENOVO/Desktop/Flower-Classification-main/app.py
