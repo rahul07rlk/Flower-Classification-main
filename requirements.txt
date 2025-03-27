@@ -1,8 +1,20 @@
-streamlit==0.80.0
-fastai==2.1.10
-pandas==1.2.4
-numpy==1.19.5
-googledrivedownloader==0.4
-Pillow==8.2.0
+# Core deep learning framework
+tensorflow>=2.4.0
+
+# Numerical computations and array manipulation
+numpy>=1.18.5
+
+# Image processing library (used by tf.keras.preprocessing and others)
+Pillow>=8.0.0
+
+# HDF5 support for saving/loading models
+h5py>=2.10.0
+
+# Visualization (optional, useful for plotting training history)
+matplotlib>=3.2.2
+
+# Scikit-learn for any additional data processing or evaluation metrics (optional)
+scikit-learn>=0.24.0
+
 
 streamlit run C:/Users/LENOVO/Desktop/Flower-Classification-main/app.py
