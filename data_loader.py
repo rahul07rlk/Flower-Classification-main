@@ -1,33 +1,38 @@
-# data_loader.py
-
 import tensorflow as tf
-from tensorflow.keras.preprocessing import image_dataset_from_directory
 
 
-def load_datasets(data_dir: str, img_size: tuple, batch_size: int, seed: int):
+def load_datasets(train_dir: str, valid_dir: str, img_size: tuple, batch_size: int, seed: int = 123):
     """
-    Loads the training and validation datasets from the specified directory.
-    Assumes the data is organized in subdirectories for each class.
+    Loads training and validation datasets using a directory structure.
+
+    Args:
+        train_dir (str): Path to training directory.
+        valid_dir (str): Path to validation directory.
+        img_size (tuple): Desired image size (height, width).
+        batch_size (int): Batch size.
+        seed (int): Random seed for shuffling.
 
     Returns:
-        train_ds, val_ds: TensorFlow Dataset objects for training and validation.
+        train_ds: tf.data.Dataset for training.
+        valid_ds: tf.data.Dataset for validation.
+        class_names: List of class names.
     """
-    train_ds = image_dataset_from_directory(
-        data_dir,
-        validation_split=0.2,
-        subset="training",
-        seed=seed,
+    train_ds = tf.keras.preprocessing.image_dataset_from_directory(
+        train_dir,
+        label_mode='int',
         image_size=img_size,
-        batch_size=batch_size
+        batch_size=batch_size,
+        shuffle=True,
+        seed=seed
     )
 
-    val_ds = image_dataset_from_directory(
-        data_dir,
-        validation_split=0.2,
-        subset="validation",
-        seed=seed,
+    valid_ds = tf.keras.preprocessing.image_dataset_from_directory(
+        valid_dir,
+        label_mode='int',
         image_size=img_size,
-        batch_size=batch_size
+        batch_size=batch_size,
+        shuffle=False
     )
 
-    return train_ds, val_ds
+    class_names = train_ds.class_names  # Assumes both directories have identical classes
+    return train_ds, valid_ds, class_names
