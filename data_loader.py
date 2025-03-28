@@ -1,38 +1,40 @@
-import tensorflow as tf
+import pandas as pd
+import streamlit as st
 
-
-def load_datasets(train_dir: str, valid_dir: str, img_size: tuple, batch_size: int, seed: int = 123):
+@st.cache(allow_output_mutation=True)
+def load_csv(csv_path="Flowers.csv"):
     """
-    Loads training and validation datasets using a directory structure.
-
-    Args:
-        train_dir (str): Path to training directory.
-        valid_dir (str): Path to validation directory.
-        img_size (tuple): Desired image size (height, width).
-        batch_size (int): Batch size.
-        seed (int): Random seed for shuffling.
-
-    Returns:
-        train_ds: tf.data.Dataset for training.
-        valid_ds: tf.data.Dataset for validation.
-        class_names: List of class names.
+    Load the CSV file containing flower details.
+    Assumes the CSV has an index column named 'Index' and a column 'Cat_Name'.
     """
-    train_ds = tf.keras.preprocessing.image_dataset_from_directory(
-        train_dir,
-        label_mode='int',
-        image_size=img_size,
-        batch_size=batch_size,
-        shuffle=True,
-        seed=seed
-    )
+    try:
+        df = pd.read_csv(csv_path, index_col=['Index'])
+        return df
+    except Exception as e:
+        st.error(f"Error loading CSV file: {e}")
+        return None
 
-    valid_ds = tf.keras.preprocessing.image_dataset_from_directory(
-        valid_dir,
-        label_mode='int',
-        image_size=img_size,
-        batch_size=batch_size,
-        shuffle=False
-    )
+def get_name(df, cat_num):
+    """
+    Retrieve the flower name for the given category number from the CSV DataFrame.
+    """
+    try:
+        return df.loc[cat_num, 'Cat_Name']
+    except Exception as e:
+        st.error(f"Error retrieving name for category {cat_num}: {e}")
+        return "Unknown"
 
-    class_names = train_ds.class_names  # Assumes both directories have identical classes
-    return train_ds, valid_ds, class_names
+def get_details(df, cat_num):
+    """
+    Retrieve additional details for the given category number.
+    Returns a DataFrame with details.
+    """
+    try:
+        temp_df = df[df.index == cat_num].T.reset_index()
+        # Skip the first row (the index) and rename columns
+        temp_df = temp_df.iloc[1:]
+        temp_df.columns = ['Major', 'Description']
+        return temp_df
+    except Exception as e:
+        st.error(f"Error retrieving details for category {cat_num}: {e}")
+        return pd.DataFrame()
